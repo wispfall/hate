@@ -46,6 +46,8 @@
             letter-spacing: 3px;
             border-bottom: 1px dashed #333;
             padding-bottom: 10px;
+            /* 添加过渡效果，让变成 fakelife 时更平滑 */
+            transition: all 1s ease; 
         }
 
         /* 输入框区域 */
@@ -141,7 +143,7 @@
             
             if (input === 'fakelife') {
                 msg.style.color = '#fff';
-                msg.innerText = "ACCESS GRANTED.未完待续coming soon";
+                msg.innerText = "ACCESS GRANTED. 欢迎来到真实的世界。";
                 // 这里可以设置通关后的跳转
             } else {
                 msg.style.color = '#ff003c';
@@ -158,27 +160,32 @@
             if (e.key === 'Enter') checkPassword();
         });
 
-        // 2. 倒计时逻辑
+        // 2. 倒计时逻辑（过期后永久锁死）
         function updateCountdown() {
             const now = new Date();
-            // 设定目标日期：今年的 11月4日 00:00:00
-            const targetDate = new Date(now.getFullYear(), 10, 4); // 10代表11月（月份从0开始算）
+            // 设定目标日期：2026年 11月4日 00:00:00
+            const targetDate = new Date(2026, 10, 4); 
             
-            // 如果现在的时间已经过了今年的11月4日，就把目标设为明年的
-            if (now > targetDate) {
-                targetDate.setFullYear(targetDate.getFullYear() + 1);
+            const diff = targetDate - now;
+            const cdElement = document.getElementById('countdown');
+
+            // 如果现在的时间已经过了目标日期（diff <= 0）
+            if (diff <= 0) {
+                cdElement.innerText = "fa : ke : life";
+                cdElement.style.color = "#fff";
+                cdElement.style.textShadow = "0 0 15px #fff"; // 纯白发光
+                cdElement.style.fontSize = "1.5rem";
+                cdElement.style.letterSpacing = "8px";
+                return; // 直接结束，永远停在这里
             }
 
-            const diff = targetDate - now;
-
-            // 如果时间到了（或者已经在最后一天，即少于1天）
-            if (diff < 24 * 60 * 60 * 1000 && diff > 0) {
-                // 变成你设计的格式
-                document.getElementById('countdown').innerText = "fa : ke : life";
-                document.getElementById('countdown').style.color = "#fff";
-                document.getElementById('countdown').style.textShadow = "0 0 10px #fff";
-            } else if (diff <= 0) {
-                 document.getElementById('countdown').innerText = "TIME IS UP.";
+            // 如果还没到，但只剩最后一天（24小时内）
+            if (diff < 24 * 60 * 60 * 1000) {
+                cdElement.innerText = "fa : ke : life";
+                cdElement.style.color = "#fff";
+                cdElement.style.textShadow = "0 0 15px #fff";
+                cdElement.style.fontSize = "1.5rem";
+                cdElement.style.letterSpacing = "8px";
             } else {
                 // 正常倒计时
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -187,7 +194,7 @@
                 const seconds = Math.floor((diff / 1000) % 60);
                 
                 // 格式化输出：例如 24 D : 05 H : 30 M : 12 S
-                document.getElementById('countdown').innerText = 
+                cdElement.innerText = 
                     `${days.toString().padStart(2, '0')} D : ${hours.toString().padStart(2, '0')} H : ${minutes.toString().padStart(2, '0')} M : ${seconds.toString().padStart(2, '0')} S`;
             }
         }
