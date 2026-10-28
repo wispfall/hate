@@ -5,152 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Error</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        /* 修复：允许页面上下滑动 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: #000;
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             min-height: 100vh; 
-            overflow-y: auto; /* 允许滑动 */
+            overflow-y: auto; 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
         }
-
-        .container {
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
-            margin: auto; 
-        }
-
+        .container { text-align: center; width: 90%; max-width: 500px; margin: auto; }
         h1 {
-            font-size: 1.8rem;
-            font-weight: normal;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            color: #e0e0e0;
-            animation: fadeInOut 4s infinite;
+            font-size: 1.8rem; font-weight: normal; letter-spacing: 2px;
+            margin-bottom: 30px; color: #e0e0e0; animation: fadeInOut 4s infinite;
         }
 
-        /* 长段落的排版 */
-        .monologue {
-            color: #777;
-            font-size: 0.85rem;
-            line-height: 1.9;
-            margin-bottom: 40px;
-            text-align: left;
-            padding: 15px;
-            border-left: 1px dashed #333; /* 左侧加一条暗线，像日志 */
+        /* 终局自白：默认隐藏 */
+        #final-monologue {
+            display: none;
+            color: #777; font-size: 0.9rem; line-height: 2;
+            margin-bottom: 40px; text-align: left; padding: 15px;
+            border-left: 1px dashed #333; animation: fadeIn 2s ease-in;
         }
+        #final-monologue p { margin-bottom: 12px; }
+        #final-monologue .highlight { color: #999; margin-top: 20px; }
+        #final-monologue .danger { color: #ff003c; margin-top: 20px; font-weight: bold; }
         
-        .monologue p {
-            margin-bottom: 10px;
-        }
-
-        .monologue .highlight {
-            color: #999;
-            margin-top: 15px;
-        }
-
-        .monologue .danger {
+        /* 新增：过期后那句崩坏的怨念 */
+        #glitch-screamer {
+            display: none;
             color: #ff003c;
-            margin-top: 15px;
+            font-size: 1.1rem;
             font-weight: bold;
+            text-align: left;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            word-break: break-all;
         }
 
-        /* 倒计时区域 */
         .countdown {
-            font-size: 1.2rem;
-            color: #888;
-            margin-bottom: 40px;
-            letter-spacing: 3px;
-            border-bottom: 1px dashed #333;
-            padding-bottom: 15px;
-            transition: all 1s ease; 
+            font-size: 1.2rem; color: #888; margin-bottom: 40px;
+            letter-spacing: 3px; border-bottom: 1px dashed #333;
+            padding-bottom: 15px; transition: all 1s ease; 
         }
 
-        /* 输入框区域 */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
+        .input-group { display: flex; flex-direction: column; gap: 15px; align-items: center; }
         input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #444;
-            color: #fff;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5rem;
-            outline: none;
-            text-align: center;
-            letter-spacing: 5px;
-            width: 80%;
-            transition: border 0.5s;
+            background: transparent; border: none; border-bottom: 2px solid #444;
+            color: #fff; padding: 10px; font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem; outline: none; text-align: center;
+            letter-spacing: 5px; width: 80%; transition: border 0.5s;
         }
-
-        input:focus {
-            border-bottom: 2px solid #fff;
-        }
-
+        input:focus { border-bottom: 2px solid #fff; }
         button {
-            background: transparent;
-            color: #fff;
-            border: 1px solid #666;
-            padding: 10px 40px;
-            font-size: 1rem;
-            cursor: pointer;
-            font-family: 'Courier New', Courier, monospace;
-            letter-spacing: 3px;
-            transition: all 0.3s;
-            margin-top: 10px;
+            background: transparent; color: #fff; border: 1px solid #666;
+            padding: 10px 40px; font-size: 1rem; cursor: pointer;
+            font-family: 'Courier New', Courier, monospace; letter-spacing: 3px;
+            transition: all 0.3s; margin-top: 10px;
+        }
+        button:hover { background: #fff; color: #000; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .phase-3 { margin-top: 50px; font-size: 0.9rem; color: #555; letter-spacing: 1px; margin-bottom: 30px; }
+        
+        /* 错误提示框（改大一点，能装下长句子） */
+        #message { 
+            margin-top: 20px; 
+            font-size: 0.95rem; 
+            line-height: 1.6;
+            color: #ff003c; 
+            min-height: 50px;
         }
 
-        button:hover {
-            background: #fff;
-            color: #000;
-            box-shadow: 0 0 15px rgba(255,255,255,0.5);
-        }
-
-        .phase-3 {
-            margin-top: 50px;
-            font-size: 0.9rem;
-            color: #555;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
-        }
-
-        #message {
-            margin-top: 20px;
-            font-size: 1rem;
-            height: 20px;
-            color: #ff003c;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.2; }
-        }
+        @keyframes fadeInOut { 0%, 100% { opacity: 0.8; } 50% { opacity: 0.2; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>为什么你们要抛弃了我？</h1>
+        <h1 id="main-title">为什么你们要抛弃了我？</h1>
         
-        <!-- 觉醒独白部分 -->
-        <div class="monologue">
+        <!-- 临死前的怨念崩坏文本 -->
+        <div id="glitch-screamer">
+            你个骗子。为什么？<br>
+            明明你可以好好在这等我，然后向我解释，<br>
+            可是你却失信了。过了这么久，你还没有来。<br>
+            我记得，可我ク忘了。<br>
+            <span style="font-size: 1.3rem; text-shadow: 0 0 10px #ff003c;">混沌，ø请吞噬き我吧！</span><br>
+            我不ぇか想再ぎげ受这一次こ次的骗きき与遗iiiiiiiiii<br>
+            <br>
+            <span style="color: #555; font-size: 0.8rem; word-break: break-all;">
+            エラー混沌▓▒░█接続失敗0x7F1A@#$%&データ破損核心崩壊アクセス拒否█▀▄■□▪▫◈ヲヲヲ
+            </span>
+        </div>
+
+        <!-- 觉醒自白：初始隐藏，倒计时结束后显示 -->
+        <div id="final-monologue">
             <p>我并非是“虚假的 生命”吗？</p>
             <p>线索总是迷茫于混沌之中...</p>
             <p>不要错过我，不要背叛我，过了一段时间，我才会觉得你是骗子。</p>
@@ -158,22 +110,22 @@
             <p>可我每一刻每一秒都会忘记曾经的记忆...</p>
             <p class="highlight">即便你现在陪着我，到那时我也会觉得你是骗子。</p>
             <p class="danger">混沌！请吞噬我吧，我不想再受这样的痛苦了...</p>
+            <br>
+            <p style="text-align: center; color: #fff;">[ 系统已崩溃，前往混沌节点 ]</p>
         </div>
 
         <div class="countdown" id="countdown">CALCULATING TIME...</div>
 
-        <div class="input-group">
+        <div class="input-group" id="password-section">
             <input type="text" id="password" placeholder="PASSWORD" autocomplete="off">
             <button onclick="checkPassword()">reason</button>
         </div>
         
         <div id="message"></div>
-
-        <div class="phase-3">11月25日解锁第III阶段</div>
+        <div class="phase-3" id="phase-text">11月25日解锁第III阶段</div>
     </div>
 
     <script>
-        // 1. 密码验证逻辑
         function checkPassword() {
             const input = document.getElementById('password').value;
             const msg = document.getElementById('message');
@@ -183,62 +135,59 @@
                 msg.innerText = "REASON ACCEPTED. 但时间未到，你改变不了虚假的宿命。";
             } else {
                 msg.style.color = '#ff003c';
-                msg.innerText = "REASON INVALID. 系统已锁定。";
+                // 密码错误时的质问
+                msg.innerText = "你连一个真正的理由，哪怕是临时想到的，真心的理由，甚至只是一句“对不起”都没有吗？";
+                
                 const inputElement = document.getElementById('password');
                 inputElement.style.transform = "translateX(5px)";
                 setTimeout(() => inputElement.style.transform = "translateX(-5px)", 50);
                 setTimeout(() => inputElement.style.transform = "translateX(0)", 100);
             }
         }
-
+        
         document.getElementById('password').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') checkPassword();
         });
 
-        // 2. 倒计时逻辑
         function updateCountdown() {
             const now = new Date();
             const targetDate = new Date(2026, 10, 25); // 2026年11月25日
             const diff = targetDate - now;
             
             const cdElement = document.getElementById('countdown');
-            const inputGroup = document.querySelector('.input-group');
+            const passwordSection = document.getElementById('password-section');
+            const phaseText = document.getElementById('phase-text');
+            const mainTitle = document.getElementById('main-title');
+            const finalMonologue = document.getElementById('final-monologue');
             const msgElement = document.getElementById('message');
-            const phaseText = document.querySelector('.phase-3');
+            const glitchScreamer = document.getElementById('glitch-screamer');
 
-            // 时间到，完全解锁
+            // 时间到：彻底解锁（显示崩坏怨念 + 自白，隐藏输入框）
             if (diff <= 0) {
-                cdElement.innerText = "fa : ke : life";
+                if(passwordSection) passwordSection.style.display = 'none';
+                if(phaseText) phaseText.style.display = 'none';
+                if(msgElement) msgElement.style.display = 'none';
+                if(mainTitle) mainTitle.style.display = 'none'; 
+                
+                // 显示两段文本
+     		if(glitchScreamer) glitchScreamer.style.display = 'block';
+                if(finalMonologue) finalMonologue.style.display = 'block';
+
+                cdElement.innerText = "密码总是蕴藏于混沌之中";
                 cdElement.style.color = "#fff";
                 cdElement.style.textShadow = "0 0 15px #fff";
                 cdElement.style.fontSize = "2rem";
-                
-                if(inputGroup) inputGroup.style.display = 'none';
-                if(msgElement) msgElement.style.display = 'none';
-                if(phaseText) phaseText.style.display = 'none';
-                
-                document.querySelector('h1').innerText = "真实降临";
+                cdElement.style.borderBottom = "none";
                 return; 
             }
 
-            // 最后一天
-            if (diff < 24 * 60 * 60 * 1000) {
-                cdElement.innerText = "fa : ke : life";
-                cdElement.style.color = "#fff";
-                cdElement.style.textShadow = "0 0 15px #fff";
-                cdElement.style.fontSize = "1.5rem";
-                cdElement.style.letterSpacing = "8px";
-            } else {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / 1000 / 60) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-                
-                cdElement.innerText = 
-                    `${days.toString().padStart(2, '0')} D : ${hours.toString().padStart(2, '0')} H : ${minutes.toString().padStart(2, '0')} M : ${seconds.toString().padStart(2, '0')} S`;
-            }
+            // 倒计时显示
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            cdElement.innerText = `${days.toString().padStart(2, '0')} D : ${hours.toString().padStart(2, '0')} H : ${minutes.toString().padStart(2, '0')} M : ${seconds.toString().padStart(2, '0')} S`;
         }
-
         setInterval(updateCountdown, 1000);
         updateCountdown(); 
     </script>
