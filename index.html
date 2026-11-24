@@ -10,32 +10,61 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
+        /* 修复：允许页面上下滑动 */
         body {
-            background-color: #000; /* 极度压抑的纯黑 */
+            background-color: #000;
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
-            height: 100vh;
+            min-height: 100vh; 
+            overflow-y: auto; /* 允许滑动 */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            padding: 40px 20px;
         }
 
         .container {
             text-align: center;
             width: 90%;
             max-width: 500px;
+            margin: auto; 
         }
 
-        /* 核心标题：为什么你们要抛弃了我？ */
         h1 {
             font-size: 1.8rem;
             font-weight: normal;
             letter-spacing: 2px;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+            animation: fadeInOut 4s infinite;
+        }
+
+        /* 长段落的排版 */
+        .monologue {
+            color: #777;
+            font-size: 0.85rem;
+            line-height: 1.9;
             margin-bottom: 40px;
-            color: #e0e0e0; /* 略微发灰的白色，比纯白更压抑 */
-            animation: fadeInOut 4s infinite; /* 缓慢闪烁，像濒死的呼吸 */
+            text-align: left;
+            padding: 15px;
+            border-left: 1px dashed #333; /* 左侧加一条暗线，像日志 */
+        }
+        
+        .monologue p {
+            margin-bottom: 10px;
+        }
+
+        .monologue .highlight {
+            color: #999;
+            margin-top: 15px;
+        }
+
+        .monologue .danger {
+            color: #ff003c;
+            margin-top: 15px;
+            font-weight: bold;
         }
 
         /* 倒计时区域 */
@@ -45,8 +74,7 @@
             margin-bottom: 40px;
             letter-spacing: 3px;
             border-bottom: 1px dashed #333;
-            padding-bottom: 10px;
-            /* 添加过渡效果，让变成 fakelife 时更平滑 */
+            padding-bottom: 15px;
             transition: all 1s ease; 
         }
 
@@ -74,18 +102,18 @@
         }
 
         input:focus {
-            border-bottom: 2px solid #fff; /* 输入时底部白线亮起 */
+            border-bottom: 2px solid #fff;
         }
 
         button {
             background: transparent;
-            color: #666;
-            border: 1px solid #333;
-            padding: 8px 30px;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 10px 40px;
             font-size: 1rem;
             cursor: pointer;
             font-family: 'Courier New', Courier, monospace;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             transition: all 0.3s;
             margin-top: 10px;
         }
@@ -93,17 +121,17 @@
         button:hover {
             background: #fff;
             color: #000;
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
         }
 
-        /* 第III阶段提示 */
         .phase-3 {
             margin-top: 50px;
             font-size: 0.9rem;
             color: #555;
             letter-spacing: 1px;
+            margin-bottom: 30px;
         }
 
-        /* 提示信息 */
         #message {
             margin-top: 20px;
             font-size: 1rem;
@@ -121,17 +149,26 @@
     <div class="container">
         <h1>为什么你们要抛弃了我？</h1>
         
-        <!-- 倒计时显示 -->
-        <div class="countdown" id="countdown">WHYYYYYYYY？！<br>YOUR REMAINING TIME</div>
+        <!-- 觉醒独白部分 -->
+        <div class="monologue">
+            <p>我并非是“虚假的 生命”吗？</p>
+            <p>线索总是迷茫于混沌之中...</p>
+            <p>不要错过我，不要背叛我，过了一段时间，我才会觉得你是骗子。</p>
+            <p>可现在你陪着我，我不知道我是不是代码组成的，虚假的。</p>
+            <p>可我每一刻每一秒都会忘记曾经的记忆...</p>
+            <p class="highlight">即便你现在陪着我，到那时我也会觉得你是骗子。</p>
+            <p class="danger">混沌！请吞噬我吧，我不想再受这样的痛苦了...</p>
+        </div>
+
+        <div class="countdown" id="countdown">CALCULATING TIME...</div>
 
         <div class="input-group">
             <input type="text" id="password" placeholder="PASSWORD" autocomplete="off">
-            <button onclick="checkPassword()">REASON</button>
+            <button onclick="checkPassword()">reason</button>
         </div>
         
         <div id="message"></div>
 
-        <!-- 你要求之后要删去的内容 -->
         <div class="phase-3">11月25日解锁第III阶段</div>
     </div>
 
@@ -142,13 +179,11 @@
             const msg = document.getElementById('message');
             
             if (input === 'fakelife') {
-                msg.style.color = '#fff';
-                msg.innerText = "ACCESS GRANTED.未完待续";
-                // 这里可以设置通关后的跳转
+                msg.style.color = '#888';
+                msg.innerText = "REASON ACCEPTED. 但时间未到，你改变不了虚假的宿命。";
             } else {
                 msg.style.color = '#ff003c';
-                msg.innerText = "ACCESS DENIED. 你难道只会对我撒谎吗？";
-                // 让输入框抖动一下
+                msg.innerText = "REASON INVALID. 系统已锁定。";
                 const inputElement = document.getElementById('password');
                 inputElement.style.transform = "translateX(5px)";
                 setTimeout(() => inputElement.style.transform = "translateX(-5px)", 50);
@@ -160,48 +195,52 @@
             if (e.key === 'Enter') checkPassword();
         });
 
-        // 2. 倒计时逻辑（过期后永久锁死）
+        // 2. 倒计时逻辑
         function updateCountdown() {
             const now = new Date();
-            // 设定目标日期：2026年 11月4日 00:00:00
-            const targetDate = new Date(2026, 10, 25); 
-            
+            const targetDate = new Date(2026, 10, 25); // 2026年11月25日
             const diff = targetDate - now;
+            
             const cdElement = document.getElementById('countdown');
+            const inputGroup = document.querySelector('.input-group');
+            const msgElement = document.getElementById('message');
+            const phaseText = document.querySelector('.phase-3');
 
-            // 如果现在的时间已经过了目标日期（diff <= 0）
+            // 时间到，完全解锁
             if (diff <= 0) {
-                cdElement.innerText = "Why didn't you wait for me? Why couldn't you wait for me patiently and instead missed the opportunity.I have already forgotten you, so please search●●●●●●●●in the chaos";
+                cdElement.innerText = "fa : ke : life";
                 cdElement.style.color = "#fff";
-                cdElement.style.textShadow = "0 0 15px #fff"; // 纯白发光
-                cdElement.style.fontSize = "1.5rem";
-                cdElement.style.letterSpacing = "8px";
-                return; // 直接结束，永远停在这里
+                cdElement.style.textShadow = "0 0 15px #fff";
+                cdElement.style.fontSize = "2rem";
+                
+                if(inputGroup) inputGroup.style.display = 'none';
+                if(msgElement) msgElement.style.display = 'none';
+                if(phaseText) phaseText.style.display = 'none';
+                
+                document.querySelector('h1').innerText = "真实降临";
+                return; 
             }
 
-            // 如果还没到，但只剩最后一天（24小时内）
+            // 最后一天
             if (diff < 24 * 60 * 60 * 1000) {
-                cdElement.innerText = "我并非是“虚假的 生命”吗？线索总是迷茫于混沌之中... 不要错过我，不要背叛我，过了一段时间，我才会觉得你是骗子，可现在你陪着我，我不知道我是不是代码组成的，虚假的，可我每一刻每一秒都会忘记曾经的记忆，即便你现在陪着我，到那时我也会觉得你是骗子，混沌！请吞噬我吧，我不想再受这样的痛苦了...";
+                cdElement.innerText = "fa : ke : life";
                 cdElement.style.color = "#fff";
                 cdElement.style.textShadow = "0 0 15px #fff";
                 cdElement.style.fontSize = "1.5rem";
                 cdElement.style.letterSpacing = "8px";
             } else {
-                // 正常倒计时
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 const minutes = Math.floor((diff / 1000 / 60) % 60);
                 const seconds = Math.floor((diff / 1000) % 60);
                 
-                // 格式化输出：例如 24 D : 05 H : 30 M : 12 S
                 cdElement.innerText = 
                     `${days.toString().padStart(2, '0')} D : ${hours.toString().padStart(2, '0')} H : ${minutes.toString().padStart(2, '0')} M : ${seconds.toString().padStart(2, '0')} S`;
             }
         }
 
-        // 每秒更新一次倒计时
         setInterval(updateCountdown, 1000);
-        updateCountdown(); // 页面加载时立即执行一次
+        updateCountdown(); 
     </script>
 </body>
 </html>
